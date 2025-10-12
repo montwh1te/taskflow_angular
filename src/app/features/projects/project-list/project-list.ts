@@ -1,11 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Project } from '../../../core/models/project.model';
+import { ProjectService } from '../project.service';
 
 @Component({
   selector: 'app-project-list',
-  imports: [],
   templateUrl: './project-list.html',
-  styleUrl: './project-list.scss'
+  styleUrls: ['./project-list.scss']
 })
-export class ProjectList {
+export class ProjectListComponent implements OnInit {
+  projects$!: Observable<Project[]>;
 
+  constructor(private projectService: ProjectService) {}
+
+  ngOnInit(): void {
+    this.projects$ = this.projectService.getAllProjects();
+  }
 }
