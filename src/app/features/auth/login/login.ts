@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,8 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  loading = false;
+  error = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
@@ -18,9 +21,20 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      this.authService.login(email, password).subscribe();
+    if (this.loginForm.invalid) {
+      return;
     }
+
+    this.loading = true;
+    this.error = '';
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe(response => {
+        if (!response) {
+          this.error = 'Credenciais inválidas. Tente novamente.';
+        }
+      });
   }
 }

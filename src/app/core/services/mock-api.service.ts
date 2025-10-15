@@ -21,7 +21,6 @@ export class MockApiService {
 
   constructor() { }
 
-  // ADICIONADO O TIPO DE RETORNO AQUI
   login(email: string, password: string): Observable<{ token: string } | null> {
     if (email === 'user@taskflow.com' && password === '123456') {
       const fakeJwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -39,5 +38,58 @@ export class MockApiService {
     return of(tasks).pipe(delay(300));
   }
 
-  // Adicione aqui métodos para criar, editar e deletar projetos/tarefas...
+  getProjectById(id: number) {
+    const project = MOCK_PROJECTS.find(p => p.id === id);
+    return of(project).pipe(delay(300));
+  }
+
+  createProject(project: { title: string; description: string }) {
+    const newId = MOCK_PROJECTS.length ? Math.max(...MOCK_PROJECTS.map(p => p.id)) + 1 : 1;
+    const newProject = { id: newId, ...project };
+    MOCK_PROJECTS.push(newProject);
+    return of(newProject).pipe(delay(300));
+  }
+
+  updateProject(id: number, changes: { title?: string; description?: string }): Observable<any> {
+    const project = MOCK_PROJECTS.find(p => p.id === id);
+    if (project) {
+      Object.assign(project, changes);
+      return of(project).pipe(delay(300));
+    }
+    return of(null).pipe(delay(300));
+  }
+
+  deleteProject(id: number) {
+    const idx = MOCK_PROJECTS.findIndex(p => p.id === id);
+    if (idx > -1) {
+      MOCK_PROJECTS.splice(idx, 1);
+      return of(true).pipe(delay(300));
+    }
+    return of(false).pipe(delay(300));
+}
+
+  createTask(task: { projectId: number; title: string; description: string; status: string; dueDate: Date }) {
+    const newId = MOCK_TASKS.length ? Math.max(...MOCK_TASKS.map(t => t.id)) + 1 : 101;
+    const newTask = { id: newId, ...task };
+    MOCK_TASKS.push(newTask);
+    return of(newTask).pipe(delay(300));
+}
+
+  updateTask(id: number, changes: { title?: string; description?: string; status?: string; dueDate?: Date }): Observable<any> {
+    const task = MOCK_TASKS.find(t => t.id === id);
+    if (task) {
+      Object.assign(task, changes);
+      return of(task).pipe(delay(300));
+    }
+    return of(null).pipe(delay(300));
+  }
+
+  deleteTask(id: number) {
+    const idx = MOCK_TASKS.findIndex(t => t.id === id);
+    if (idx > -1) {
+      MOCK_TASKS.splice(idx, 1);
+      return of(true).pipe(delay(300));
+    }
+    return of(false).pipe(delay(300));
+}
 }

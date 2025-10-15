@@ -8,5 +8,19 @@ export class ProjectService {
   getAllProjects() {
     return this.api.getProjects();
   }
-  // Implementar getById, create, update, delete aqui...
+  getProjectById(id: number) {
+    return this.api.getProjectById(id);
+  }
+
+  createProject(project: { title: string; description: string }) {
+    return this.api.createProject(project);
+  }
+
+  updateProject(id: number, changes: { title?: string; description?: string }) {
+    return this.api.updateProject(id, changes);
+  }
+
+  deleteProject(id: number) {
+    return this.api.deleteProject(id);
+  }
 }

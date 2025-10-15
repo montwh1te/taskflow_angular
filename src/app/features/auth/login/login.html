@@ -12,5 +12,6 @@
       <mat-error *ngIf="loginForm.get('password')?.invalid">Senha é obrigatória</mat-error>
     </mat-form-field>
     <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Entrar</button>
+    <mat-error *ngIf="error">{{ error }}</mat-error>
   </form>
 </div>

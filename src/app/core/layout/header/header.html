@@ -1,1 +1,7 @@
-<p>header works!</p>
+<mat-toolbar color="primary">
+  <span>TaskFlow</span>
+  <span class="spacer"></span>
+  <button *ngIf="isLoggedIn$ | async" mat-icon-button (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
