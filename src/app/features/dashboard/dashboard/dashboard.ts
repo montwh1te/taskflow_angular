@@ -3,11 +3,15 @@ import { ProjectService } from '../../projects/project.service';
 import { MockApiService } from '../../../core/services/mock-api.service'; // Usando direto para simplificar
 import { forkJoin } from 'rxjs';
 import { Task, TaskStatus } from '../../../core/models/task.model';
+import { MaterialImportsModule } from '../../../material-imports.module';
+import { DatePipe } from '@angular/common';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.scss']
+  styleUrls: ['./dashboard.scss'],
+  imports: [ MaterialImportsModule, DatePipe, NgxChartsModule ]
 })
 export class DashboardComponent implements OnInit {
   totalProjects = 0;

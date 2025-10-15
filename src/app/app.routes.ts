@@ -7,7 +7,7 @@ import { ProjectListComponent } from './features/projects/project-list/project-l
 import { ProjectDetailComponent } from './features/projects/project-detail/project-detail';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {
     path: '',

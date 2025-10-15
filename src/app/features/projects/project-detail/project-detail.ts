@@ -9,11 +9,16 @@ import { TaskService } from '../task.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectFormDialogComponent, ProjectFormData } from '../project-form-dialog/project-form-dialog';
 import { TaskFormDialogComponent, TaskFormData } from '../task-form-dialog/task-form-dialog';
+import { MaterialImportsModule } from '../../../material-imports.module';
+import { DatePipe } from '@angular/common';
+import { TaskFilterPipe } from '../../../shared/pipes/task-filter-pipe';
+import { TaskSearchPipe } from '../../../shared/pipes/task-search.pipe';
 
 @Component({
   selector: 'app-project-detail',
   templateUrl: './project-detail.html',
-  styleUrls: ['./project-detail.scss']
+  styleUrls: ['./project-detail.scss'],
+  imports: [ MaterialImportsModule, DatePipe, TaskFilterPipe, TaskSearchPipe ]
 })
 export class ProjectDetailComponent implements OnInit { // Renomeie a classe
   selectedStatus: import('../../../core/models/task.model').TaskStatus | 'Todos' = 'Todos';

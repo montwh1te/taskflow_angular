@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { finalize } from 'rxjs/operators';
+import { MaterialImportsModule } from '../../../material-imports.module';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
-  styleUrls: ['./login.scss']
+  styleUrls: ['./login.scss'],
+  imports: [ MaterialImportsModule, DatePipe, ReactiveFormsModule ],
 })
 export class LoginComponent {
   loginForm: FormGroup;

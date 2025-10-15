@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../features/auth/auth.service';
 import { Observable } from 'rxjs';
+import { MaterialImportsModule } from '../../../material-imports.module';
+import { DatePipe } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.html',
-  styleUrl: './header.scss'
+  styleUrl: './header.scss',
+  imports: [MaterialImportsModule, DatePipe, MatToolbarModule]
 })
 export class Header {
   isLoggedIn$: Observable<boolean>;

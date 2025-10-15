@@ -4,29 +4,31 @@
 	<button mat-flat-button color="primary" (click)="openProjectDialog(project)">Editar Projeto</button>
 	<button mat-button color="warn" (click)="deleteProject(project.id)">Excluir Projeto</button>
 </div>
-<div style="margin-top: 32px">
-	<h3>Tarefas</h3>
-	<button mat-flat-button color="accent" (click)="openTaskDialog(undefined, project?.id)">Nova Tarefa</button>
-	<mat-form-field appearance="fill" style="width: 200px; margin-right: 16px;">
-		<mat-label>Filtrar por Status</mat-label>
-		<mat-select [(ngModel)]="selectedStatus">
-			<mat-option value="Todos">Todos</mat-option>
-			<mat-option value="A Fazer">A Fazer</mat-option>
-			<mat-option value="Em Andamento">Em Andamento</mat-option>
-			<mat-option value="Concluído">Concluído</mat-option>
-		</mat-select>
-	</mat-form-field>
-	<mat-form-field appearance="fill" style="width: 300px;">
-		<mat-label>Buscar tarefa</mat-label>
-		<input matInput [(ngModel)]="searchText" placeholder="Digite para buscar..." />
-	</mat-form-field>
-	<ul>
-		<li *ngFor="let task of (tasks$ | async | taskFilter:selectedStatus | taskSearch:searchText)">
-			<strong>{{ task.title }}</strong> - {{ task.status }}<br />
-			<span>{{ task.description }}</span><br />
-			<span>Entrega: {{ task.dueDate | date:'shortDate' }}</span><br />
-			<button mat-button color="primary" (click)="openTaskDialog(task, project?.id)">Editar</button>
-			<button mat-button color="warn" (click)="deleteTask(task.id, project?.id)">Excluir</button>
-		</li>
-	</ul>
-</div>
+<ng-container *ngIf="project$ | async as project">
+	<div style="margin-top: 32px">
+		<h3>Tarefas</h3>
+		<button mat-flat-button color="accent" (click)="openTaskDialog(undefined, project.id)">Nova Tarefa</button>
+		<mat-form-field appearance="fill" style="width: 200px; margin-right: 16px;">
+			<mat-label>Filtrar por Status</mat-label>
+			<mat-select [(ngModel)]="selectedStatus">
+				<mat-option value="Todos">Todos</mat-option>
+				<mat-option value="A Fazer">A Fazer</mat-option>
+				<mat-option value="Em Andamento">Em Andamento</mat-option>
+				<mat-option value="Concluído">Concluído</mat-option>
+			</mat-select>
+		</mat-form-field>
+		<mat-form-field appearance="fill" style="width: 300px;">
+			<mat-label>Buscar tarefa</mat-label>
+			<input matInput [(ngModel)]="searchText" placeholder="Digite para buscar..." />
+		</mat-form-field>
+		<ul>
+			<li *ngFor="let task of (tasks$ | async | taskFilter:selectedStatus | taskSearch:searchText)">
+				<strong>{{ task.title }}</strong> - {{ task.status }}<br />
+				<span>{{ task.description }}</span><br />
+				<span>Entrega: {{ task.dueDate | date:'shortDate' }}</span><br />
+				<button mat-button color="primary" (click)="openTaskDialog(task, project.id)">Editar</button>
+				<button mat-button color="warn" (click)="deleteTask(task.id, project.id)">Excluir</button>
+			</li>
+		</ul>
+	</div>
+</ng-container>
