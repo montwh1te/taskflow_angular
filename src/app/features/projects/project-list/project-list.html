@@ -1,20 +1,50 @@
-<h1>Meus Projetos</h1>
-<button mat-fab color="primary" aria-label="Adicionar projeto">
-  <mat-icon>add</mat-icon>
-</button>
-
-<div class="project-cards-container">
-  <mat-card *ngFor="let project of projects$ | async" class="project-card">
-    <mat-card-header>
-      <mat-card-title>{{ project.title }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>{{ project.description }}</p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button [routerLink]="['/projetos', project.id]">VER TAREFAS</button>
-      <button mat-icon-button><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
-    </mat-card-actions>
-  </mat-card>
+<div class="page-header">
+  <h1>Meus Projetos</h1>
+  <button mat-fab color="primary" matTooltip="Adicionar novo projeto" aria-label="Adicionar projeto" (click)="openCreateDialog()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>
+
+<div *ngIf="(projects$ | async) as projects; else loadingTemplate">
+
+  <div *ngIf="projects.length > 0; else noProjectsTemplate">
+    <div class="project-cards-container">
+      <mat-card *ngFor="let project of projects" class="project-card">
+        <mat-card-header>
+          <mat-card-title>{{ project.title }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ project.description }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-stroked-button color="primary" [routerLink]="['/projects', project.id]">
+            <mat-icon>visibility</mat-icon>
+            Ver Tarefas
+          </button>
+          <button mat-icon-button matTooltip="Editar projeto" (click)="openEditDialog(project)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" matTooltip="Excluir projeto" (click)="openDeleteDialog(project)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-state">
+    <mat-spinner [diameter]="60"></mat-spinner>
+    <p>Carregando projetos...</p>
+  </div>
+</ng-template>
+
+<ng-template #noProjectsTemplate>
+  <div class="empty-state">
+    <mat-icon>folder_off</mat-icon>
+    <p>Nenhum projeto encontrado.</p>
+    <p>Clique no botão '+' para adicionar seu primeiro projeto!</p>
+  </div>
+</ng-template>

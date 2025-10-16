@@ -7,6 +7,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
   templateUrl: './header.html',
   styleUrl: './header.scss',
   imports: [MaterialImportsModule, DatePipe, MatToolbarModule]

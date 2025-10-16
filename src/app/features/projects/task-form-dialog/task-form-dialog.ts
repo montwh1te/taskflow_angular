@@ -14,6 +14,7 @@ export interface TaskFormData {
 @Component({
   selector: 'app-task-form-dialog',
   templateUrl: './task-form-dialog.html',
+  styleUrls: ['./task-form-dialog.scss'],
   imports: [MaterialImportsModule, DatePipe, ReactiveFormsModule]
 })
 export class TaskFormDialogComponent {

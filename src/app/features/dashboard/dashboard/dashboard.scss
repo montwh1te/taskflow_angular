@@ -1,0 +1,112 @@
+// src/app/features/dashboard/dashboard/dashboard.scss
+
+:host {
+  display: block;
+  padding: 24px;
+  background-color: #f4f7fa;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+// Estilo base para todos os cards do dashboard
+.dashboard-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Título padrão para os cards
+.mat-mdc-card-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #3f51b5; // Cor primária do Angular Material
+  margin-bottom: 16px;
+}
+
+// Conteúdo padrão para os cards
+.mat-mdc-card-content {
+  color: #333;
+}
+
+// Card de estatística (Projetos Ativos)
+.stat-card {
+  .mat-mdc-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .project-count {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+
+// Card do gráfico
+.chart-card {
+  .mat-mdc-card-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 250px; // Altura fixa para o gráfico
+  }
+}
+
+// Card da lista de tarefas
+.list-card {
+  .mat-mdc-card-content {
+    padding-top: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .task-title {
+      font-weight: 500;
+    }
+
+    .task-due-date {
+      font-size: 0.85em;
+      color: #e91e63; // Cor de destaque (accent)
+      font-weight: 500;
+    }
+  }
+
+  .no-tasks {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+    font-style: italic;
+  }
+}

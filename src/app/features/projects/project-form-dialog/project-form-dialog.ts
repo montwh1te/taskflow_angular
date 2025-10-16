@@ -12,6 +12,7 @@ export interface ProjectFormData {
 @Component({
   selector: 'app-project-form-dialog',
   templateUrl: './project-form-dialog.html',
+  styleUrls: ['./project-form-dialog.scss'],
   imports: [ MaterialImportsModule, DatePipe, ReactiveFormsModule ]
 })
 export class ProjectFormDialogComponent {

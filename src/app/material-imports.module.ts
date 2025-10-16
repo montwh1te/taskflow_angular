@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -12,10 +12,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
-    BrowserModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
@@ -24,6 +25,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatButtonModule,
     MatSelectModule,
     MatOptionModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
@@ -31,7 +33,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
   ],
   exports: [
-    BrowserModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
@@ -40,6 +42,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatButtonModule,
     MatSelectModule,
     MatOptionModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,

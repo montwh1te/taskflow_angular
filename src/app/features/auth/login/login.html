@@ -1,17 +1,52 @@
-<div class="login-container">
-  <h2>Login - TaskFlow</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" type="email">
-      <mat-error *ngIf="loginForm.get('email')?.invalid">Email inválido</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Senha</mat-label>
-      <input matInput formControlName="password" type="password">
-      <mat-error *ngIf="loginForm.get('password')?.invalid">Senha é obrigatória</mat-error>
-    </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Entrar</button>
-    <mat-error *ngIf="error">{{ error }}</mat-error>
-  </form>
+<div class="login-page">
+  <div class="login-container">
+
+    <div class="login-header">
+      <h2>Bem-vindo ao TaskFlow</h2>
+      <p>Acesse sua conta para continuar</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="seu@email.com">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+          Email é obrigatório.
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+          Formato de email inválido.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput formControlName="password" type="password">
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+          Senha é obrigatória.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="login-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="login-button"
+          [disabled]="loginForm.invalid || loading">
+          <span *ngIf="!loading">Entrar</span>
+          <mat-progress-spinner
+            *ngIf="loading"
+            class="button-spinner"
+            color="accent"
+            mode="indeterminate"
+            [diameter]="24">
+          </mat-progress-spinner>
+        </button>
+      </div>
+
+      <mat-error *ngIf="error" class="login-error">{{ error }}</mat-error>
+    </form>
+  </div>
 </div>

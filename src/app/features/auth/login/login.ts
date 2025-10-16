@@ -4,12 +4,14 @@ import { AuthService } from '../auth.service';
 import { finalize } from 'rxjs/operators';
 import { MaterialImportsModule } from '../../../material-imports.module';
 import { DatePipe } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
-  imports: [ MaterialImportsModule, DatePipe, ReactiveFormsModule ],
+  imports: [ MaterialImportsModule, DatePipe, ReactiveFormsModule, MatProgressSpinnerModule ],
 })
 export class LoginComponent {
   loginForm: FormGroup;

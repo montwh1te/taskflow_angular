@@ -1,0 +1,179 @@
+// src/app/features/projects/project-detail/project-detail.scss
+
+:host {
+  display: block;
+  padding: 24px 32px;
+  background-color: #f4f7fa;
+  min-height: calc(100vh - 64px); // Altura total menos o header
+}
+
+.page-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// Estilo base para os cards da página
+.detail-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  padding: 24px 32px;
+
+  &:not(:last-child) {
+    margin-bottom: 32px;
+  }
+}
+
+// Card de informações do projeto
+.project-info-card {
+  .project-header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 24px;
+
+    .project-title {
+      font-size: 2rem;
+      padding-top: 5%;
+      font-weight: 600;
+      color: #3f51b5;
+      margin: 0 0 8px 0;
+    }
+
+    .project-description {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+    }
+  }
+
+  .project-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+}
+
+// Card da seção de tarefas
+.tasks-card {
+  .tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #3f51b5;
+      margin: 0;
+    }
+  }
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap; // Permite que os filtros quebrem a linha em telas menores
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+// Lista de tarefas
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.task-item {
+  background: #f9f9fb;
+  border: 1px solid #e8eaf6;
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .task-main-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .task-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .task-description {
+    color: #666;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+  }
+
+  .task-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #777;
+
+    .due-date {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+  }
+
+  .task-actions {
+    margin-top: 16px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
+// Estilo dos "chips" de status
+.status-chip {
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+
+  &.a-fazer { background-color: #ffc107; } // Amarelo
+  &.em-andamento { background-color: #2196f3; } // Azul
+  &.concluido { background-color: #4caf50; } // Verde
+}
+
+// Estados de carregamento e vazio
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  border: 2px dashed #cfd8dc;
+  border-radius: 16px;
+  text-align: center;
+  color: #78909c;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 16px;
+  }
+}

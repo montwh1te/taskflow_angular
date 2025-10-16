@@ -1,0 +1,45 @@
+// src/app/core/layout/header/header.scss
+
+:host {
+  display: block;
+  position: sticky; // Mantém o header fixo no topo
+  top: 0;
+  z-index: 1000; // Garante que ele fique acima de outros elementos
+}
+
+.header-toolbar {
+  // Usamos space-between para empurrar o título para a esquerda e o botão para a direita
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); // Sombra sutil para dar profundidade
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px; // Espaço entre o ícone e o título
+  text-decoration: none;
+  color: inherit; // Herda a cor branca do toolbar
+
+  .header-icon {
+    // Aumenta um pouco o ícone para dar mais destaque
+    transform: scale(1.2);
+  }
+
+  .header-title {
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+}
+
+.logout-button {
+  // O mat-icon-button já tem um bom estilo, mas adicionamos um feedback no hover
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

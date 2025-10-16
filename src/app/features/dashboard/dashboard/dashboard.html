@@ -1,18 +1,55 @@
 <div class="dashboard-grid">
-  <mat-card class="stat-card">
-    <mat-card-title>Projetos Ativos</mat-card-title>
-    <mat-card-content>{{ totalProjects }}</mat-card-content>
-  </mat-card>
-  
-  <mat-card class="chart-card">
-    <mat-card-title>Tarefas por Status</mat-card-title>
+
+  <mat-card class="dashboard-card stat-card">
+    <mat-card-header>
+      <mat-card-title>Projetos Ativos</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
-      <ngx-charts-pie-chart [results]="taskStatusData" [labels]="true">
-      </ngx-charts-pie-chart>
+      <span class="project-count">{{ totalProjects }}</span>
+      <button mat-flat-button color="primary" routerLink="/projects">
+        <mat-icon>folder_open</mat-icon>
+        Gerenciar Projetos
+      </button>
     </mat-card-content>
   </mat-card>
-  
-  <mat-card class="list-card">
-    <mat-card-title>Tarefas com Vencimento Próximo</mat-card-title>
-    </mat-card>
+
+  <mat-card class="dashboard-card chart-card">
+    <mat-card-header>
+      <mat-card-title>Tarefas por Status</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ngx-charts-pie-chart
+        *ngIf="taskStatusData.length > 0"
+        [results]="taskStatusData"
+        [labels]="true"
+        [doughnut]="true"
+        [arcWidth]="0.25">
+      </ngx-charts-pie-chart>
+      <div *ngIf="taskStatusData.length === 0" class="no-tasks">
+        <span>Nenhuma tarefa encontrada.</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="dashboard-card list-card">
+    <mat-card-header>
+      <mat-card-title>Tarefas com Vencimento Próximo</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="upcomingTasks.length > 0; else noTasksTemplate">
+        <ul class="task-list">
+          <li *ngFor="let task of upcomingTasks" class="task-item">
+            <span class="task-title">{{ task.title }}</span>
+            <span class="task-due-date">{{ task.dueDate | date: 'dd/MM' }}</span>
+          </li>
+        </ul>
+      </div>
+      <ng-template #noTasksTemplate>
+        <div class="no-tasks">
+          <span>Nenhuma tarefa vencendo nos próximos dias.</span>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+
 </div>

@@ -16,11 +16,11 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'projetos', component: ProjectListComponent },
-      { path: 'projetos/:id', component: ProjectDetailComponent },
+      { path: 'projects', component: ProjectListComponent },
+      { path: 'projects/:id', component: ProjectDetailComponent },
     ]
   },
-  { path: '**', redirectTo: 'login' } // Rota coringa
+  { path: '**', redirectTo: 'dashboard' } // Página 404
 ];
 
 @NgModule({

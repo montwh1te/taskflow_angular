@@ -1,0 +1,26 @@
+// src/app/features/projects/project-form/project-form.scss
+
+// Título do diálogo
+.mat-mdc-dialog-title {
+  font-weight: 500;
+  color: #3f51b5; // Cor primária do tema
+}
+
+// Conteúdo do diálogo (formulário)
+.mat-mdc-dialog-content {
+  padding-top: 20px !important; // Adiciona espaço após o título
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // Espaço entre os campos do formulário
+}
+
+// Campos de formulário
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+// Ações (botões) do diálogo
+.mat-mdc-dialog-actions {
+  padding: 0 24px 24px 24px !important; // Ajusta o espaçamento dos botões
+  justify-content: flex-end;
+}

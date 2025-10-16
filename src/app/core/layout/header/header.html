@@ -1,7 +1,16 @@
-<mat-toolbar color="primary">
-  <span>TaskFlow</span>
-  <span class="spacer"></span>
-  <button *ngIf="isLoggedIn$ | async" mat-icon-button (click)="logout()">
+<mat-toolbar color="primary" class="header-toolbar">
+  <a routerLink="/dashboard" class="header-brand">
+    <mat-icon class="header-icon">task_alt</mat-icon>
+    <span class="header-title">TaskFlow</span>
+  </a>
+
+  <button
+    *ngIf="isLoggedIn$ | async"
+    mat-icon-button
+    class="logout-button"
+    (click)="logout()"
+    matTooltip="Sair"
+    aria-label="Botão para sair do sistema">
     <mat-icon>logout</mat-icon>
   </button>
 </mat-toolbar>

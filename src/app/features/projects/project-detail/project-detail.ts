@@ -13,6 +13,7 @@ import { MaterialImportsModule } from '../../../material-imports.module';
 import { DatePipe } from '@angular/common';
 import { TaskFilterPipe } from '../../../shared/pipes/task-filter-pipe';
 import { TaskSearchPipe } from '../../../shared/pipes/task-search.pipe';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-detail',
@@ -21,17 +22,17 @@ import { TaskSearchPipe } from '../../../shared/pipes/task-search.pipe';
   imports: [ MaterialImportsModule, DatePipe, TaskFilterPipe, TaskSearchPipe ]
 })
 export class ProjectDetailComponent implements OnInit { // Renomeie a classe
-  selectedStatus: import('../../../core/models/task.model').TaskStatus | 'Todos' = 'Todos';
-  searchText: string = '';
-  project$!: Observable<Project | undefined>;
-  tasks$!: Observable<Task[]>;
-
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
     private taskService: TaskService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
+  selectedStatus: import('../../../core/models/task.model').TaskStatus | 'Todos' = 'Todos';
+  searchText: string = '';
+  project$!: Observable<Project | undefined>;
+  tasks$!: Observable<Task[]>;
 
   ngOnInit(): void {
     const projectId$ = this.route.params.pipe(
@@ -81,7 +82,13 @@ export class ProjectDetailComponent implements OnInit { // Renomeie a classe
   }
 
   deleteProject(id: number) {
-    this.projectService.deleteProject(id).subscribe(() => this.refreshProjects());
+    this.projectService.deleteProject(id).subscribe(() => {
+      this.router.navigate(['/projects']);
+    });
+  }
+
+  goToProjects() {
+    this.router.navigate(['/projects']);
   }
 
   deleteTask(id: number, projectId: number) {
