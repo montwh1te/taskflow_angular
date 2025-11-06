@@ -12,6 +12,7 @@ npm-debug.log
 yarn-error.log
 
 # IDEs and editors
+GEMINI.md
 .idea/
 .project
 .classpath
