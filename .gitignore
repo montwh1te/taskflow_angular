@@ -19,7 +19,10 @@ GEMINI.md
 .c9/
 *.launch
 .settings/
-*.sublime-workspace
+*.sublime-workspace~
+
+# Environments 
+environments.ts
 
 # Visual Studio Code
 .vscode/*
