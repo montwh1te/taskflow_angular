@@ -4,14 +4,16 @@ import { MockApiService } from '../../../core/services/mock-api.service'; // Usa
 import { forkJoin } from 'rxjs';
 import { Task, TaskStatus } from '../../../core/models/task.model';
 import { MaterialImportsModule } from '../../../material-imports.module';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { TimestampToDatePipe } from '../../../shared/pipes/timestamp-to-date.pipe';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
-  imports: [ MaterialImportsModule, DatePipe, NgxChartsModule ]
+  imports: [ MaterialImportsModule, DatePipe, NgxChartsModule, CommonModule, TimestampToDatePipe ]
 })
 export class DashboardComponent implements OnInit {
   totalProjects = 0;
@@ -19,6 +21,16 @@ export class DashboardComponent implements OnInit {
   upcomingTasks: Task[] = [];
 
   constructor(private apiService: MockApiService) {} // Injetando o mock service
+
+  private convertToDate(value: Date | Timestamp | any): Date {
+    if (value instanceof Date) {
+      return value;
+    }
+    if (value && typeof value.toDate === 'function') {
+      return value.toDate();
+    }
+    return new Date(value);
+  }
 
   ngOnInit(): void {
     forkJoin({
@@ -46,10 +58,12 @@ export class DashboardComponent implements OnInit {
       this.upcomingTasks = tasks
         .map(task => ({
           ...task,
-          status: task.status as TaskStatus,
-          dueDate: new Date(task.dueDate)
+          status: task.status as TaskStatus
         }))
-        .filter(task => task.dueDate > today && task.dueDate <= threeDaysFromNow);
+        .filter(task => {
+          const dueDate = this.convertToDate(task.dueDate);
+          return dueDate > today && dueDate <= threeDaysFromNow;
+        });
     });
   }
 }

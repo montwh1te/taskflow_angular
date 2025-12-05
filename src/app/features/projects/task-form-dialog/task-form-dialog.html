@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ data.title ? 'Editar Tarefa' : 'Nova Tarefa' }}</h2>
 
-<form [formGroup]="form" (ngSubmit)="onSave()">
+<form [formGroup]="form">
   <mat-dialog-content>
     <mat-form-field appearance="outline">
       <mat-label>Título da Tarefa</mat-label>
@@ -32,10 +32,68 @@
       <mat-datepicker #picker></mat-datepicker>
       <mat-error>A data é obrigatória.</mat-error>
     </mat-form-field>
+
+    <!-- Seção de Anexos -->
+    <div class="attachments-section">
+      <h3>Anexos</h3>
+
+      <!-- Upload de Arquivo -->
+      <div class="file-upload-area">
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          multiple
+          style="display: none;">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="fileInput.click()"
+          [disabled]="uploadingFile"
+          class="upload-button">
+          <mat-icon>cloud_upload</mat-icon>
+          {{ selectedFiles.length > 0 ? `${selectedFiles.length} arquivo(s) selecionado(s)` : 'Selecionar Arquivos' }}
+        </button>
+
+        <button
+          mat-flat-button
+          color="accent"
+          type="button"
+          (click)="uploadFiles()"
+          [disabled]="selectedFiles.length === 0 || uploadingFile || !data.id"
+          class="upload-submit">
+          <span *ngIf="!uploadingFile">Fazer Upload</span>
+          <mat-progress-spinner
+            *ngIf="uploadingFile"
+            [diameter]="20"
+            mode="indeterminate"
+            color="accent">
+          </mat-progress-spinner>
+        </button>
+      </div>
+
+      <!-- Lista de Anexos -->
+      <div class="attachments-list" *ngIf="attachments.length > 0">
+        <mat-list>
+          <mat-list-item *ngFor="let attachment of attachments" class="attachment-item">
+            <mat-icon matListItemIcon>attachment</mat-icon>
+            <div matListItemTitle>{{ attachment.fileName }}</div>
+            <div matListItemLine>{{ (attachment.fileSize / 1024).toFixed(2) }} KB</div>
+            <button
+              mat-icon-button
+              matListItemMeta
+              (click)="removeAttachment(attachment)"
+              matTooltip="Remover anexo">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
     <button mat-button type="button" (click)="onCancel()">Cancelar</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Salvar</button>
+    <button mat-flat-button color="primary" type="button" (click)="onSave()" [disabled]="form.invalid">Salvar</button>
   </mat-dialog-actions>
 </form>

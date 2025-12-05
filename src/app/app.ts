@@ -5,7 +5,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MaterialImportsModule, DatePipe],
+  imports: [RouterOutlet, MaterialImportsModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

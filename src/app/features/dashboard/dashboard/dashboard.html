@@ -40,7 +40,7 @@
         <ul class="task-list">
           <li *ngFor="let task of upcomingTasks" class="task-item">
             <span class="task-title">{{ task.title }}</span>
-            <span class="task-due-date">{{ task.dueDate | date: 'dd/MM' }}</span>
+            <span class="task-due-date">{{ task.dueDate | timestampToDate | date: 'dd/MM' }}</span>
           </li>
         </ul>
       </div>

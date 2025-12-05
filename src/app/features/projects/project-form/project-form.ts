@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-project-form',
-  imports: [ MaterialImportsModule, DatePipe ],
+  imports: [ MaterialImportsModule ],
   templateUrl: './project-form.html',
   styleUrl: './project-form.scss'
 })

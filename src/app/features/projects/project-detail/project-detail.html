@@ -22,7 +22,7 @@
           <mat-icon>edit</mat-icon>
           Editar Projeto
         </button>
-        <button mat-stroked-button color="warn" (click)="deleteProject(project.id)">
+        <button mat-stroked-button color="warn" (click)="deleteProject(project.id)" *ngIf="project.id">
           <mat-icon>delete_outline</mat-icon>
           Excluir Projeto
         </button>
@@ -32,7 +32,7 @@
     <mat-card class="detail-card tasks-card">
       <div class="tasks-header">
         <h3>Tarefas</h3>
-        <button mat-flat-button color="accent" (click)="openTaskDialog(undefined, project.id)">
+        <button mat-flat-button color="accent" (click)="openTaskDialog(undefined, project.id)" *ngIf="project.id">
           <mat-icon>add</mat-icon>
           Nova Tarefa
         </button>
@@ -71,13 +71,13 @@
             <div class="task-meta">
               <span class="due-date">
                 <mat-icon>event</mat-icon>
-                Vencimento: {{ task.dueDate | date:'dd/MM/yyyy' }}
+                Vencimento: {{ task.dueDate | timestampToDate | date:'dd/MM/yyyy' }}
               </span>
               <div class="task-actions">
-                <button mat-icon-button color="primary" matTooltip="Editar tarefa" (click)="openTaskDialog(task, project.id)">
+                <button mat-icon-button color="primary" matTooltip="Editar tarefa" (click)="openTaskDialog(task, project.id)" *ngIf="project.id">
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" matTooltip="Excluir tarefa" (click)="deleteTask(task.id, project.id)">
+                <button mat-icon-button color="warn" matTooltip="Excluir tarefa" (click)="deleteTask(task.id, project.id)" *ngIf="project.id && task.id">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>

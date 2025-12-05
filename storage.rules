@@ -1,0 +1,51 @@
+/**
+ * Firebase Storage Rules para TaskFlow
+ * 
+ * Regras de segurança para uploads de anexos
+ */
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Função auxiliar para verificar autenticação
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Função para extrair userId do caminho
+    function isUserPath(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Regras para anexos de tarefas
+    // Estrutura: attachments/{taskId}/{filename}
+    match /attachments/{taskId}/{allPaths=**} {
+      // Permitir leitura apenas para o proprietário
+      allow read: if isAuthenticated();
+      
+      // Permitir upload: arquivo < 10MB
+      allow create: if isAuthenticated() &&
+                       request.resource.size < 10 * 1024 * 1024 &&
+                       request.resource.contentType.matches('.*/(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|txt|zip)');
+      
+      // Permitir update: arquivo < 10MB
+      allow update: if isAuthenticated() &&
+                       request.resource.size < 10 * 1024 * 1024;
+      
+      // Permitir delete: apenas o proprietário
+      allow delete: if isAuthenticated();
+    }
+
+    // Permitir leitura de arquivos públicos
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Negar todo o resto
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

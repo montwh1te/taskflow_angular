@@ -1,36 +1,82 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { MockApiService } from '../../core/services/mock-api.service';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, authState } from '@angular/fire/auth';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private _isLoggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
-  isLoggedIn$ = this._isLoggedIn$.asObservable();
+  private auth = inject(Auth);
+  private router = inject(Router);
 
-  constructor(private mockApi: MockApiService, private router: Router) {}
+  // Observable do estado de autenticação do Firebase
+  authState$ = authState(this.auth);
 
-  private hasToken(): boolean {
-    return !!localStorage.getItem('authToken');
-  }
+  // Observable derivado para verificar se está logado
+  isLoggedIn$ = this.authState$.pipe(
+    map(user => !!user)
+  );
 
-  login(email: string, password: string) {
-    return this.mockApi.login(email, password).pipe(
-      // Esta parte agora funcionará corretamente
-      tap(response => {
-        if (response?.token) {
-          localStorage.setItem('authToken', response.token);
-          this._isLoggedIn$.next(true);
+  // Observable para obter o userId
+  userId$ = this.authState$.pipe(
+    map(user => user?.uid || null)
+  );
+
+  /**
+   * Login com email e senha
+   */
+  login(email: string, password: string): Observable<any> {
+    return new Observable(observer => {
+      signInWithEmailAndPassword(this.auth, email, password)
+        .then(credential => {
+          observer.next(credential.user);
+          observer.complete();
           this.router.navigate(['/dashboard']);
-        }
-      })
-    );
+        })
+        .catch(error => {
+          observer.error(error);
+        });
+    });
   }
 
-  logout() {
-    localStorage.removeItem('authToken');
-    this._isLoggedIn$.next(false);
-    this.router.navigate(['/login']);
+  /**
+   * Registro de novo usuário
+   */
+  signup(email: string, password: string): Observable<any> {
+    return new Observable(observer => {
+      createUserWithEmailAndPassword(this.auth, email, password)
+        .then(credential => {
+          observer.next(credential.user);
+          observer.complete();
+          this.router.navigate(['/dashboard']);
+        })
+        .catch(error => {
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Logout
+   */
+  logout(): Observable<void> {
+    return new Observable(observer => {
+      signOut(this.auth)
+        .then(() => {
+          observer.next();
+          observer.complete();
+          this.router.navigate(['/login']);
+        })
+        .catch(error => {
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Obtém o usuário atual (síncrono)
+   */
+  getCurrentUser() {
+    return this.auth.currentUser;
   }
 }

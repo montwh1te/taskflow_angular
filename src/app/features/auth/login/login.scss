@@ -8,8 +8,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; // Ocupa a altura total da tela
+  min-height: 100vh; // Altura mínima da tela
   background: linear-gradient(135deg, #eceff1 0%, #cfd8dc 100%);
+  padding: 20px;
 }
 
 .login-container {
@@ -42,10 +43,11 @@
 // Estiliza os campos de formulário do Angular Material
 .mat-mdc-form-field {
   width: 100%;
+  margin-bottom: 16px;
 }
 
 .login-actions {
-  margin-top: 16px;
+  margin-top: 24px;
 }
 
 .login-button {
@@ -69,6 +71,23 @@
   margin-top: 20px;
   text-align: center;
   font-weight: 500;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #6c757d;
+
+  a {
+    color: #3f51b5;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 // Animação de entrada

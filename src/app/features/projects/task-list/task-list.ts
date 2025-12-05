@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-task-list',
-  imports: [ MaterialImportsModule, DatePipe ],
+  imports: [ MaterialImportsModule ],
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss'
 })

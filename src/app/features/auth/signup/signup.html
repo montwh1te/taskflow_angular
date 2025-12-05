@@ -1,0 +1,95 @@
+<div class="signup-page">
+  <div class="signup-container">
+
+    <div class="signup-header">
+      <h2>Criar Conta</h2>
+      <p>Registre-se para começar a usar o TaskFlow</p>
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="seu@email.com">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="email?.hasError('required')">
+          Email é obrigatório.
+        </mat-error>
+        <mat-error *ngIf="email?.hasError('email')">
+          Formato de email inválido.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres">
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="password?.hasError('required')">
+          Senha é obrigatória.
+        </mat-error>
+        <mat-error *ngIf="password?.hasError('minlength')">
+          Senha deve ter pelo menos 6 caracteres.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirmar Senha</mat-label>
+        <input
+          matInput
+          [type]="hideConfirmPassword ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          placeholder="Repita sua senha">
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="toggleConfirmPasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hideConfirmPassword">
+          <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="confirmPassword?.hasError('required')">
+          Confirmação de senha é obrigatória.
+        </mat-error>
+        <mat-error *ngIf="signupForm.hasError('passwordMismatch') && confirmPassword?.touched">
+          Senhas não conferem.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="signup-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="signup-button"
+          [disabled]="signupForm.invalid || loading">
+          <span *ngIf="!loading">Criar Conta</span>
+          <mat-progress-spinner
+            *ngIf="loading"
+            class="button-spinner"
+            color="accent"
+            mode="indeterminate"
+            [diameter]="24">
+          </mat-progress-spinner>
+        </button>
+      </div>
+
+      <mat-error *ngIf="error" class="signup-error">{{ error }}</mat-error>
+    </form>
+
+    <div class="signup-footer">
+      <p>Já tem conta? <a (click)="navigateToLogin()" class="login-link">Fazer Login</a></p>
+    </div>
+  </div>
+</div>

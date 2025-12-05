@@ -1,50 +1,109 @@
-<div class="page-header">
-  <h1>Meus Projetos</h1>
-  <button mat-fab color="primary" matTooltip="Adicionar novo projeto" aria-label="Adicionar projeto" (click)="openCreateDialog()">
-    <mat-icon>add</mat-icon>
-  </button>
-</div>
-
-<div *ngIf="(projects$ | async) as projects; else loadingTemplate">
-
-  <div *ngIf="projects.length > 0; else noProjectsTemplate">
-    <div class="project-cards-container">
-      <mat-card *ngFor="let project of projects" class="project-card">
-        <mat-card-header>
-          <mat-card-title>{{ project.title }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>{{ project.description }}</p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-stroked-button color="primary" [routerLink]="['/projects', project.id]">
-            <mat-icon>visibility</mat-icon>
-            Ver Tarefas
-          </button>
-          <button mat-icon-button matTooltip="Editar projeto" (click)="openEditDialog(project)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" matTooltip="Excluir projeto" (click)="openDeleteDialog(project)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
+<div class="page-container">
+  <div class="page-header">
+    <h1>Meus Projetos</h1>
+    <button
+      mat-fab
+      color="primary"
+      matTooltip="Adicionar novo projeto"
+      aria-label="Adicionar projeto"
+      (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 
-</div>
+  <!-- Mensagem de Erro -->
+  <mat-card class="error-message" *ngIf="(error$ | async) as error">
+    <div class="error-content">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-icon-button (click)="clearError()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </mat-card>
 
-<ng-template #loadingTemplate>
-  <div class="loading-state">
+  <!-- Estado de Carregamento -->
+  <div class="loading-state" *ngIf="(isLoading$ | async) && !(projects$ | async)">
     <mat-spinner [diameter]="60"></mat-spinner>
     <p>Carregando projetos...</p>
   </div>
-</ng-template>
 
-<ng-template #noProjectsTemplate>
-  <div class="empty-state">
-    <mat-icon>folder_off</mat-icon>
-    <p>Nenhum projeto encontrado.</p>
-    <p>Clique no botão '+' para adicionar seu primeiro projeto!</p>
+  <!-- Lista de Projetos -->
+  <div *ngIf="(projects$ | async) as projects; else loadingTemplate">
+    <!-- Projetos Encontrados -->
+    <div *ngIf="projects.length > 0; else noProjectsTemplate" class="projects-section">
+      <div class="project-cards-container">
+        <mat-card *ngFor="let project of projects" class="project-card">
+          <mat-card-header>
+            <div class="card-title-section">
+              <mat-card-title>{{ project.title }}</mat-card-title>
+              <mat-icon *ngIf="(isDeleting$ | async) === project.id" class="deleting-spinner">
+                <mat-spinner [diameter]="20" color="warn"></mat-spinner>
+              </mat-icon>
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p class="description">{{ project.description }}</p>
+
+            <!-- Progresso do Projeto -->
+            <div class="progress-section" *ngIf="project.progress !== undefined">
+              <div class="progress-label">
+                <span>Progresso</span>
+                <span class="progress-value">{{ project.progress }}%</span>
+              </div>
+              <mat-progress-bar
+                mode="determinate"
+                [value]="project.progress"
+                [color]="project.progress === 100 ? 'accent' : 'primary'">
+              </mat-progress-bar>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              color="primary"
+              [routerLink]="['/projects', project.id]"
+              [disabled]="(isDeleting$ | async) === project.id">
+              <mat-icon>visibility</mat-icon>
+              Ver Tarefas
+            </button>
+            <button
+              mat-icon-button
+              matTooltip="Editar projeto"
+              (click)="openEditDialog(project)"
+              [disabled]="(isDeleting$ | async) === project.id">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              matTooltip="Excluir projeto"
+              (click)="openDeleteDialog(project)"
+              [disabled]="(isDeleting$ | async) === project.id">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
   </div>
-</ng-template>
+
+  <!-- Nenhum Projeto -->
+  <ng-template #noProjectsTemplate>
+    <div class="empty-state">
+      <mat-icon>folder_off</mat-icon>
+      <p class="empty-title">Nenhum projeto encontrado.</p>
+      <p class="empty-subtitle">Clique no botão '+' para adicionar seu primeiro projeto!</p>
+    </div>
+  </ng-template>
+
+  <!-- Loading Template -->
+  <ng-template #loadingTemplate>
+    <div class="loading-state">
+      <mat-spinner [diameter]="60"></mat-spinner>
+      <p>Carregando projetos...</p>
+    </div>
+  </ng-template>
+</div>

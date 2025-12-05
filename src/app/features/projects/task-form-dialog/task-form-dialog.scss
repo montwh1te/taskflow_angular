@@ -1,17 +1,19 @@
-// src/app/features/projects/task-form/task-form.scss
+// src/app/features/projects/task-form-dialog/task-form-dialog.scss
 
 // Título do diálogo
 .mat-mdc-dialog-title {
   font-weight: 500;
-  color: #3f51b5; // Cor primária do tema
+  color: #3f51b5;
 }
 
 // Conteúdo do diálogo (formulário)
-.mat-mdc-dialog-content {
-  padding-top: 20px !important; // Adiciona espaço após o título
+::ng-deep .mat-mdc-dialog-content {
+  padding-top: 20px !important;
   display: flex;
   flex-direction: column;
-  gap: 16px; // Espaço entre os campos do formulário
+  gap: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 // Campos de formulário
@@ -19,8 +21,67 @@
   width: 100%;
 }
 
+// Seção de Anexos
+.attachments-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #424242;
+    margin: 0 0 12px 0;
+  }
+}
+
+// Área de Upload
+.file-upload-area {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.upload-button {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.upload-submit {
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+// Lista de Anexos
+.attachments-list {
+  margin-top: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+
+  .attachment-item {
+    height: auto;
+    padding: 8px 16px;
+
+    mat-icon {
+      color: #757575;
+    }
+  }
+}
+
 // Ações (botões) do diálogo
-.mat-mdc-dialog-actions {
-  padding: 0 24px 24px 24px !important; // Ajusta o espaçamento dos botões
+::ng-deep .mat-mdc-dialog-actions {
+  padding: 0 24px 24px 24px !important;
   justify-content: flex-end;
+  gap: 8px;
 }

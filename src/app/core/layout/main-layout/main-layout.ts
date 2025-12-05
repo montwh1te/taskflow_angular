@@ -6,7 +6,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [ Header, RouterModule, MaterialImportsModule, DatePipe ],
+  imports: [ Header, RouterModule, MaterialImportsModule ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })

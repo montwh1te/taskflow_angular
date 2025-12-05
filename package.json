@@ -1,12 +1,22 @@
 {
   "name": "taskflow-app",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Aplicação Serverless de Gerenciamento de Tarefas com Angular e Firebase",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "serve": "ng serve --open",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint",
+    "firebase:serve": "firebase serve",
+    "firebase:deploy": "firebase deploy",
+    "firebase:deploy:hosting": "firebase deploy --only hosting",
+    "firebase:deploy:functions": "firebase deploy --only functions",
+    "firebase:deploy:firestore": "firebase deploy --only firestore:rules",
+    "firebase:emulate": "firebase emulators:start"
   },
   "prettier": {
     "printWidth": 100,
@@ -22,6 +32,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^20.3.15",
     "@angular/cdk": "^20.2.8",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
@@ -41,12 +52,15 @@
     "@angular/cli": "^20.3.5",
     "@angular/compiler-cli": "^20.3.0",
     "@types/jasmine": "~5.1.0",
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^7.0.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "prettier": "^3.7.4",
     "typescript": "~5.9.2"
   }
 }

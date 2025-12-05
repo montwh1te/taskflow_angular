@@ -4,7 +4,12 @@
   display: block;
   padding: 24px 32px;
   background-color: #f4f7fa;
-  min-height: calc(100vh - 64px); // Altura total menos o header
+  min-height: calc(100vh - 64px);
+}
+
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 // Cabeçalho da página (Título e botão Adicionar)
@@ -17,15 +22,44 @@
   h1 {
     font-size: 2rem;
     font-weight: 600;
-    color: #3f51b5; // Cor primária do tema
+    color: #3f51b5;
     margin: 0;
   }
+}
+
+// Mensagem de erro
+.error-message {
+  margin-bottom: 20px;
+  background-color: #ffebee;
+  border-left: 4px solid #d32f2f;
+
+  .error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #d32f2f;
+    font-weight: 500;
+
+    mat-icon {
+      flex-shrink: 0;
+    }
+
+    p {
+      margin: 0;
+      flex: 1;
+    }
+  }
+}
+
+// Seção de Projetos
+.projects-section {
+  animation: fadeIn 0.3s ease-in;
 }
 
 // Container dos cards
 .project-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
 
@@ -35,57 +69,116 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   display: flex;
-  flex-direction: column; // Organiza o card verticalmente
+  flex-direction: column;
+  overflow: hidden;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   }
 
   .mat-mdc-card-header {
-    padding: 20px 20px 0 20px;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
   }
 
-  .mat-mdc-card-title {
-    font-size: 1.15rem;
-    font-weight: 500;
+  .card-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .mat-mdc-card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #3f51b5;
+      margin: 0;
+      flex: 1;
+    }
+
+    .deleting-spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   .mat-mdc-card-content {
-    padding: 0 20px 20px 20px;
+    padding: 20px;
     color: #555;
-    flex-grow: 1; // Faz o conteúdo empurrar as ações para o final
+    flex-grow: 1;
+
+    .description {
+      margin: 0 0 16px 0;
+      line-height: 1.6;
+      min-height: 40px;
+    }
+  }
+
+  .progress-section {
+    margin-top: 8px;
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #424242;
+
+      .progress-value {
+        background-color: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+    }
   }
 
   .mat-mdc-card-actions {
-    padding: 0 12px 12px 12px;
+    padding: 12px;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    gap: 8px;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
   }
 }
 
-// Mensagem para quando não houver projetos
+// Estados vazios e de carregamento
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px;
+  padding: 80px 24px;
   border: 2px dashed #cfd8dc;
   border-radius: 16px;
   text-align: center;
   color: #78909c;
+  background-color: white;
 
   mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: 16px;
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    opacity: 0.5;
   }
 
-  p {
-    font-size: 1.1rem;
+  .empty-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+
+  .empty-subtitle {
+    font-size: 1rem;
     margin: 0;
   }
 }
@@ -95,12 +188,56 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px;
+  padding: 80px 24px;
   color: #78909c;
+  background-color: white;
+  border-radius: 12px;
 
   p {
+    margin-top: 16px;
+    font-size: 1.1rem;
+  }
+}
+
+// Animações
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  :host {
+    padding: 16px 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+
+    h1 {
+      font-size: 1.5rem;
+      align-self: flex-start;
+    }
+  }
+
+  .project-cards-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .empty-state,
+  .loading-state {
+    padding: 48px 16px;
+  }
+}  p {
     margin-top: 24px;
     font-size: 1.2rem;
     font-weight: 500;
   }
-}
