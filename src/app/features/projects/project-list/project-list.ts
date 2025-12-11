@@ -53,13 +53,15 @@ export class ProjectListComponent implements OnInit {
       if (result) {
         this.isLoading$.next(true);
         this.projectService.createProject(result)
-          .then(() => {
-            this.loadProjects();
-          })
-          .catch(error => {
-            this.error$.next('Erro ao criar projeto. Tente novamente.');
-            console.error('Erro ao criar projeto:', error);
-            this.isLoading$.next(false);
+          .pipe(finalize(() => this.isLoading$.next(false)))
+          .subscribe({
+            next: () => {
+              this.loadProjects();
+            },
+            error: (error: any) => {
+              this.error$.next('Erro ao criar projeto. Tente novamente.');
+              console.error('Erro ao criar projeto:', error);
+            }
           });
       }
     });
@@ -78,13 +80,15 @@ export class ProjectListComponent implements OnInit {
       if (result) {
         this.isLoading$.next(true);
         this.projectService.updateProject(project.id!, result)
-          .then(() => {
-            this.loadProjects();
-          })
-          .catch(error => {
-            this.error$.next('Erro ao atualizar projeto. Tente novamente.');
-            console.error('Erro ao atualizar projeto:', error);
-            this.isLoading$.next(false);
+          .pipe(finalize(() => this.isLoading$.next(false)))
+          .subscribe({
+            next: () => {
+              this.loadProjects();
+            },
+            error: (error: any) => {
+              this.error$.next('Erro ao atualizar projeto. Tente novamente.');
+              console.error('Erro ao atualizar projeto:', error);
+            }
           });
       }
     });
@@ -112,13 +116,15 @@ export class ProjectListComponent implements OnInit {
   private deleteProject(project: Project) {
     this.isDeleting$.next(project.id!);
     this.projectService.deleteProject(project.id!)
-      .then(() => {
-        this.loadProjects();
-      })
-      .catch(error => {
-        this.error$.next('Erro ao deletar projeto. Tente novamente.');
-        console.error('Erro ao deletar projeto:', error);
-        this.isDeleting$.next(null);
+      .pipe(finalize(() => this.isDeleting$.next(null)))
+      .subscribe({
+        next: () => {
+          this.loadProjects();
+        },
+        error: (error: any) => {
+          this.error$.next('Erro ao deletar projeto. Tente novamente.');
+          console.error('Erro ao deletar projeto:', error);
+        }
       });
   }
 

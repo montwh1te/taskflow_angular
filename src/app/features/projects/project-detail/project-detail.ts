@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, finalize } from 'rxjs/operators';
 import { Project } from '../../../core/models/project.model';
-import { Task } from '../../../core/models/task.model';
+import { Task, TaskAttachment } from '../../../core/models/task.model';
 import { ProjectService } from '../project.service';
 import { TaskService } from '../task.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,6 +14,7 @@ import { DatePipe, CommonModule } from '@angular/common';
 import { TaskFilterPipe } from '../../../shared/pipes/task-filter-pipe';
 import { TaskSearchPipe } from '../../../shared/pipes/task-search.pipe';
 import { TimestampToDatePipe } from '../../../shared/pipes/timestamp-to-date.pipe';
+import { AttachmentViewerComponent } from '../attachment-viewer/attachment-viewer';
 import { Router } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
 
@@ -21,7 +22,7 @@ import { Timestamp } from '@angular/fire/firestore';
   selector: 'app-project-detail',
   templateUrl: './project-detail.html',
   styleUrls: ['./project-detail.scss'],
-  imports: [ MaterialImportsModule, DatePipe, TaskFilterPipe, TaskSearchPipe, TimestampToDatePipe, CommonModule ]
+  imports: [ MaterialImportsModule, DatePipe, TaskFilterPipe, TaskSearchPipe, TimestampToDatePipe, CommonModule, AttachmentViewerComponent ]
 })
 export class ProjectDetailComponent implements OnInit { // Renomeie a classe
   constructor(
@@ -33,7 +34,7 @@ export class ProjectDetailComponent implements OnInit { // Renomeie a classe
   ) {}
   selectedStatus: import('../../../core/models/task.model').TaskStatus | 'Todos' = 'Todos';
   searchText: string = '';
-  project$!: Observable<Project | undefined>;
+  project$!: Observable<Project | null>;
   tasks$!: Observable<Task[]>;
 
   ngOnInit(): void {
@@ -59,9 +60,15 @@ export class ProjectDetailComponent implements OnInit { // Renomeie a classe
     dialogRef.afterClosed().subscribe((result: ProjectFormData) => {
       if (result) {
         if (project && project.id) {
-          this.projectService.updateProject(project.id, result).then(() => this.refreshProject(project.id));
+          this.projectService.updateProject(project.id, result).subscribe({
+            next: () => this.refreshProject(project.id),
+            error: (error: any) => console.error('Erro ao atualizar projeto:', error)
+          });
         } else {
-          this.projectService.createProject(result).then(() => this.refreshProjects());
+          this.projectService.createProject(result).subscribe({
+            next: () => this.refreshProjects(),
+            error: (error: any) => console.error('Erro ao criar projeto:', error)
+          });
         }
       }
     });
@@ -75,9 +82,39 @@ export class ProjectDetailComponent implements OnInit { // Renomeie a classe
     dialogRef.afterClosed().subscribe((result: TaskFormData) => {
       if (result) {
         if (task && task.id) {
-          this.taskService.updateTask(task.id, result as any).then(() => this.refreshTasks(task.projectId));
+          console.log('✏️ Atualizando tarefa:', task.id, 'Anexos:', result.attachments?.length || 0);
+          this.taskService.updateTask(task.id, result as any).subscribe({
+            next: () => this.refreshTasks(task.projectId),
+            error: (error: any) => console.error('❌ Erro ao atualizar tarefa:', error)
+          });
         } else if (projectId) {
-          this.taskService.createTask({ ...result, projectId, status: result.status as any } as any).then(() => this.refreshTasks(projectId));
+          console.log('➕ Criando nova tarefa. Anexos para upload:', result.attachments?.length || 0);
+          this.taskService.createTask({ ...result, projectId, status: result.status as any } as any).subscribe({
+            next: (newTask: Task) => {
+              console.log('✅ Tarefa criada com ID:', newTask.id);
+              // Se houver anexos, salvar no Firestore
+              if (result.attachments && result.attachments.length > 0 && newTask.id) {
+                console.log('💾 Salvando', result.attachments.length, 'anexo(s) para tarefa:', newTask.id);
+                result.attachments.forEach((att, idx) => {
+                  console.log(`  ${idx + 1}. ${att.fileName} - URL: ${att.fileUrl.substring(0, 60)}...`);
+                });
+                this.taskService.addAttachment(newTask.id, result.attachments).subscribe({
+                  next: () => {
+                    console.log('✅ Anexos salvos no Firestore com sucesso');
+                    this.refreshTasks(projectId);
+                  },
+                  error: (error: any) => {
+                    console.error('❌ Erro ao salvar anexos:', error);
+                    this.refreshTasks(projectId);
+                  }
+                });
+              } else {
+                console.log('ℹ️ Nenhum anexo para salvar');
+                this.refreshTasks(projectId);
+              }
+            },
+            error: (error: any) => console.error('❌ Erro ao criar tarefa:', error)
+          });
         }
       }
     });
@@ -85,8 +122,9 @@ export class ProjectDetailComponent implements OnInit { // Renomeie a classe
 
   deleteProject(id: string | undefined) {
     if (id) {
-      this.projectService.deleteProject(id).then(() => {
-        this.router.navigate(['/projects']);
+      this.projectService.deleteProject(id).subscribe({
+        next: () => this.router.navigate(['/projects']),
+        error: (error: any) => console.error('Erro ao deletar projeto:', error)
       });
     }
   }
@@ -97,7 +135,28 @@ export class ProjectDetailComponent implements OnInit { // Renomeie a classe
 
   deleteTask(id: string | undefined, projectId: string) {
     if (id) {
-      this.taskService.deleteTask(id).then(() => this.refreshTasks(projectId));
+      this.taskService.deleteTask(id).subscribe({
+        next: () => this.refreshTasks(projectId),
+        error: (error: any) => console.error('Erro ao deletar tarefa:', error)
+      });
+    }
+  }
+
+  deleteAttachment(task: Task, attachment: TaskAttachment) {
+    if (task.id) {
+      console.log('🗑️ Removendo anexo:', attachment.fileName, 'da tarefa:', task.id);
+      // Remove o anexo da lista
+      const updatedAttachments = (task.attachments || []).filter(a => a.id !== attachment.id);
+      // Atualiza a tarefa no Firestore
+      this.taskService.addAttachment(task.id, updatedAttachments).subscribe({
+        next: () => {
+          console.log('✅ Anexo removido com sucesso');
+          this.refreshTasks(task.projectId);
+        },
+        error: (error: any) => {
+          console.error('❌ Erro ao remover anexo:', error);
+        }
+      });
     }
   }
 

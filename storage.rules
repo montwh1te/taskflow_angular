@@ -13,28 +13,25 @@ service firebase.storage {
       return request.auth != null;
     }
 
-    // Função para extrair userId do caminho
-    function isUserPath(userId) {
-      return request.auth.uid == userId;
-    }
-
     // Regras para anexos de tarefas
-    // Estrutura: attachments/{taskId}/{filename}
-    match /attachments/{taskId}/{allPaths=**} {
+    // Estrutura: attachments/{userId}/{taskId}/{filename}
+    match /attachments/{userId}/{taskId}/{allPaths=**} {
       // Permitir leitura apenas para o proprietário
-      allow read: if isAuthenticated();
+      allow read: if isAuthenticated() && request.auth.uid == userId;
       
-      // Permitir upload: arquivo < 10MB
-      allow create: if isAuthenticated() &&
+      // Permitir upload (create): arquivo < 10MB, tipos específicos
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == userId &&
                        request.resource.size < 10 * 1024 * 1024 &&
-                       request.resource.contentType.matches('.*/(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|txt|zip)');
+                       request.resource.contentType.matches('.*/(pdf|docx?|xlsx?|pptx?|jpe?g|png|gif|txt|zip|md)');
       
       // Permitir update: arquivo < 10MB
-      allow update: if isAuthenticated() &&
+      allow update: if isAuthenticated() && 
+                       request.auth.uid == userId &&
                        request.resource.size < 10 * 1024 * 1024;
       
       // Permitir delete: apenas o proprietário
-      allow delete: if isAuthenticated();
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
     }
 
     // Permitir leitura de arquivos públicos

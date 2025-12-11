@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthAdapterService } from '../auth-adapter.service';
+import { FirebaseAuthService } from '../firebase-auth.service';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs/operators';
 import { MaterialImportsModule } from '../../../material-imports.module';
@@ -16,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class SignupComponent {
   private fb = inject(FormBuilder);
-  private authAdapter = inject(AuthAdapterService);
+  private authService = inject(FirebaseAuthService);
   private router = inject(Router);
 
   signupForm: FormGroup;
@@ -69,6 +69,7 @@ export class SignupComponent {
 
   onSubmit() {
     if (this.signupForm.invalid) {
+      this.error = 'Por favor, preencha todos os campos corretamente.';
       return;
     }
 
@@ -76,44 +77,20 @@ export class SignupComponent {
     this.error = '';
     const { email, password } = this.signupForm.value;
 
-    this.authAdapter.signup(email, password)
+    console.log('📝 Iniciando signup com email:', email);
+    
+    this.authService.signup(email, password)
       .pipe(finalize(() => this.loading = false))
-      .subscribe(
-        (result) => {
-          console.log('✅ Signup retornou:', result);
-          if (result && result.user) {
-            // ✅ Signup bem-sucedido
-            console.log('✅ Usuário criado, aguardando 300ms antes de redirecionar');
-            setTimeout(() => {
-              console.log('⏱️  300ms passou, verificando localStorage antes de navegar');
-              console.log('   mockAuth:', localStorage.getItem('mockAuth'));
-              const isLogged = this.authAdapter.isLoggedIn();
-              console.log('   isLoggedIn:', isLogged);
-              if (isLogged) {
-                console.log('🔄 Iniciando navegação manual para /dashboard');
-                this.router.navigate(['/dashboard'], { replaceUrl: true }).then((success) => {
-                  console.log('🎯 Router.navigate resultado:', success);
-                  if (!success) {
-                    console.error('❌ ERRO! Router.navigate retornou false');
-                    console.log('   Tentando diagnóstico: verifica isLoggedIn() novamente');
-                    console.log('   isLoggedIn():', this.authAdapter.isLoggedIn());
-                  }
-                });
-              } else {
-                console.log('❌ Não conseguiu fazer signup! isLoggedIn falhou');
-              }
-            }, 300);
-          } else {
-            // ❌ Erro no signup
-            console.log('❌ Signup falhou');
-            this.error = 'Erro ao criar conta. Tente novamente.';
-          }
+      .subscribe({
+        next: () => {
+          console.log('✅ Signup bem-sucedido! Redirecionando para login.');
+          this.router.navigate(['/login']);
         },
-        (error) => {
-          console.error('❌ Signup erro:', error);
+        error: (error) => {
+          console.error('❌ Erro no signup:', error);
           this.handleSignupError(error);
         }
-      );
+      });
   }
 
   navigateToLogin() {
@@ -121,7 +98,9 @@ export class SignupComponent {
   }
 
   private handleSignupError(error: any) {
-    const errorCode = error?.code;
+    const errorCode = error?.code || error?.message || '';
+
+    console.error('🔴 Firebase Error Code:', errorCode);
 
     switch (errorCode) {
       case 'auth/email-already-in-use':
@@ -134,7 +113,7 @@ export class SignupComponent {
         this.error = 'Senha fraca. Use pelo menos 6 caracteres.';
         break;
       default:
-        this.error = 'Erro ao criar conta. Tente novamente.';
+        this.error = error?.message || 'Erro ao criar conta. Tente novamente.';
     }
   }
 }

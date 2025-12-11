@@ -60,7 +60,7 @@
           color="accent"
           type="button"
           (click)="uploadFiles()"
-          [disabled]="selectedFiles.length === 0 || uploadingFile || !data.id"
+          [disabled]="selectedFiles.length === 0 || uploadingFile"
           class="upload-submit">
           <span *ngIf="!uploadingFile">Fazer Upload</span>
           <mat-progress-spinner

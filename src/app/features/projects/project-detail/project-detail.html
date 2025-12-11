@@ -68,6 +68,11 @@
               }">{{ task.status }}</span>
             </div>
             <p class="task-description">{{ task.description }}</p>
+            <!-- Attachment Viewer -->
+            <app-attachment-viewer 
+              [attachments]="task.attachments"
+              (deleteAttachmentEvent)="deleteAttachment(task, $event)"
+            ></app-attachment-viewer>
             <div class="task-meta">
               <span class="due-date">
                 <mat-icon>event</mat-icon>

@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthAdapterService } from '../auth-adapter.service';
+import { FirebaseAuthService } from '../firebase-auth.service';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs/operators';
 import { MaterialImportsModule } from '../../../material-imports.module';
@@ -14,25 +14,29 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrls: ['./login.scss'],
   imports: [CommonModule, MaterialImportsModule, ReactiveFormsModule, MatProgressSpinnerModule, RouterLink],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private authAdapter = inject(AuthAdapterService);
+  private authService = inject(FirebaseAuthService);
   private router = inject(Router);
 
   loginForm: FormGroup;
   loading = false;
   error = '';
-  authMode = '';
-  testCredentials = 'user@taskflow.com / 123456';
 
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-    
-    // Mostrar qual modo está ativo
-    this.authMode = this.authAdapter.getAuthMode();
+  }
+
+  ngOnInit() {
+    // Se já está logado, redirecionar para dashboard
+    this.authService.isLoggedIn().subscribe(loggedIn => {
+      if (loggedIn) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 
   get email() {
@@ -45,6 +49,7 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.invalid) {
+      this.error = 'Por favor, preencha os campos corretamente.';
       return;
     }
 
@@ -52,61 +57,44 @@ export class LoginComponent {
     this.error = '';
     const { email, password } = this.loginForm.value;
 
-    this.authAdapter.login(email, password)
+    console.log('🔑 Iniciando login com email:', email);
+    
+    this.authService.login(email, password)
       .pipe(finalize(() => this.loading = false))
-      .subscribe(
-        (result) => {
-          console.log('✅ Login retornou:', result);
-          if (result && result.user) {
-            // ✅ Login bem-sucedido
-            console.log('✅ Credenciais aceitas, aguardando 300ms antes de redirecionar');
-            setTimeout(() => {
-              console.log('⏱️  300ms passou, verificando localStorage antes de navegar');
-              console.log('   mockAuth:', localStorage.getItem('mockAuth'));
-              const isLogged = this.authAdapter.isLoggedIn();
-              console.log('   isLoggedIn:', isLogged);
-              if (isLogged) {
-                console.log('🔄 Iniciando navegação manual para /dashboard');
-                this.router.navigate(['/dashboard'], { replaceUrl: true }).then((success) => {
-                  console.log('🎯 Router.navigate resultado:', success);
-                  if (!success) {
-                    console.error('❌ ERRO! Router.navigate retornou false');
-                    console.log('   Tentando diagnóstico: verifica isLoggedIn() novamente');
-                    console.log('   isLoggedIn():', this.authAdapter.isLoggedIn());
-                  }
-                });
-              } else {
-                console.log('❌ Não conseguiu fazer login! isLoggedIn falhou');
-              }
-            }, 300);
-          } else {
-            // ❌ Credenciais inválidas
-            console.log('❌ Login falhou - credenciais inválidas');
-            this.error = 'Email ou senha incorretos.';
-          }
+      .subscribe({
+        next: (user) => {
+          console.log('✅ Login bem-sucedido:', user?.email);
+          this.router.navigate(['/dashboard']).then(success => {
+            console.log('✅ Redirecionado para dashboard:', success);
+          });
         },
-        (error) => {
-          console.error('❌ Login erro:', error);
+        error: (error) => {
+          console.error('❌ Erro no login:', error);
           this.handleLoginError(error);
         }
-      );
+      });
   }
 
   private handleLoginError(error: any) {
-    const errorCode = error?.code;
+    const errorCode = error?.code || error?.message || '';
+    
+    console.error('🔴 Firebase Error Code:', errorCode);
     
     switch (errorCode) {
       case 'auth/invalid-email':
         this.error = 'Email inválido.';
         break;
       case 'auth/user-not-found':
-        this.error = 'Usuário não encontrado.';
+        this.error = 'Usuário não encontrado. Crie uma conta primeiro.';
         break;
       case 'auth/wrong-password':
         this.error = 'Senha incorreta.';
         break;
       case 'auth/invalid-credential':
-        this.error = 'Credenciais inválidas.';
+        this.error = 'Email ou senha incorretos.';
+        break;
+      case 'auth/too-many-requests':
+        this.error = 'Muitas tentativas de login. Tente mais tarde.';
         break;
       default:
         this.error = error?.message || 'Erro ao fazer login. Tente novamente.';
